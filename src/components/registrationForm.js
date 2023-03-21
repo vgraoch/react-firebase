@@ -44,6 +44,13 @@ function RegistrationForm() {
         const newPostKey = push(child(ref(database), 'posts')).key;
         const updates = {};
         updates['/' + newPostKey] = obj
+        
+        //clear fields
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
         return update(ref(database), updates);
     }
 
