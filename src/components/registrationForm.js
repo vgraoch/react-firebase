@@ -3,6 +3,12 @@ import './style.css'
 import {database} from '../firebase'
 import {ref,push,child,update} from "firebase/database";
 
+
+//input validation regular expressions (https://regexr.com/)
+const EMAIL_REGEX = /^[A-z][A-z0-9@.]{8,23}$/;
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 function RegistrationForm() {
     
     const [firstName, setFirstName] = useState(null);
@@ -34,6 +40,15 @@ function RegistrationForm() {
     
     const handleSubmit = () =>{
         console.log(firstName,lastName,email,password,confirmPassword);
+        //We validated input as user entered, but to prevent direct submition sto backend. 
+        const userValid = USER_REGEX.test(firstName);
+        const pwdValid = PWD_REGEX.test(password);
+        if (!userValid || !pwdValid) {
+            alert('Input validation failed. Input should meet contraints');
+            return;
+        }
+        //Input is valid, call backend API to store the user info.
+        
         let obj = {
                 firstName : firstName,
                 lastName:lastName,
@@ -44,7 +59,7 @@ function RegistrationForm() {
         const newPostKey = push(child(ref(database), 'posts')).key;
         const updates = {};
         updates['/' + newPostKey] = obj
-        
+
         //clear fields
         setFirstName('');
         setLastName('');
